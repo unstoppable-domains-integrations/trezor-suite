@@ -77,6 +77,12 @@ export const init = () => async (dispatch: Dispatch, getState: GetState) => {
                 appUrl: '@trezor/suite',
             },
         });
+
+        if (typeof window !== 'undefined') {
+            // @ts-ignore
+            window.TrezorConnect = TrezorConnect;
+        }
+
         dispatch({
             type: SUITE.CONNECT_INITIALIZED,
         });
