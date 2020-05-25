@@ -30,6 +30,7 @@ interface Props {
     localCurrency: Output['localCurrency']['value'];
     state: 'error' | undefined;
     sendFormActions: DispatchProps['sendFormActions'];
+    register: any;
 }
 
 export default (props: Props) => (

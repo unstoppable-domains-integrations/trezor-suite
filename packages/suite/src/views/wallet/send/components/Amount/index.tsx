@@ -104,13 +104,15 @@ const getMaxIcon = (setMaxActivated: boolean) => {
     return setMaxActivated ? 'CHECK' : 'SEND';
 };
 
-export default ({ sendFormActions, output, selectedAccount, send }: Props) => {
-    if (selectedAccount.status !== 'loaded' || !send) return null;
+export default ({ sendFormActions, output, selectedAccount, send, register, errors }: Props) => {
+    if (selectedAccount.status !== 'loaded') return null;
 
     const { account, network } = selectedAccount;
-    const { token } = send.networkTypeEthereum;
+    // const { token } = send.networkTypeEthereum;
     const { symbol } = account;
-    const { setMaxActivated, customFee } = send;
+    const setMaxActivated = false;
+    const customFee = null;
+    const token = null;
     const { id, amount, fiatValue, localCurrency } = output;
     const { value, error, isLoading } = amount;
     const reserve =
@@ -138,16 +140,16 @@ export default ({ sendFormActions, output, selectedAccount, send }: Props) => {
                         text: <Translation id="TR_SEND_SEND_MAX" />,
                     }}
                     align="right"
-                    value={value || ''}
-                    onChange={e => sendFormActions.handleAmountChange(id, e.target.value)}
-                    bottomText={getMessage(
-                        error,
-                        decimals,
-                        reserve,
-                        isLoading,
-                        symbol,
-                        customFee.error,
-                    )}
+                    // value={value || ''}
+                    // onChange={e => sendFormActions.handleAmountChange(id, e.target.value)}
+                    bottomText={getMessage(error, decimals, reserve, isLoading, symbol, null)}
+                    name={`amount[${output.id}]`}
+                    innerRef={register({
+                        validate: {
+                            minValue: value => parseFloat(value) > 0,
+                            maxValue: value => value === '1',
+                        },
+                    })}
                 />
                 {tokenBalance && (
                     <TokenBalance>

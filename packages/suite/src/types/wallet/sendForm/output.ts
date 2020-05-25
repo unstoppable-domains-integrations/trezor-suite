@@ -34,6 +34,7 @@ export interface Output {
     id: number;
     address: Address;
     amount: Amount;
+    setMax?: boolean;
     fiatValue: FiatValue;
     localCurrency: LocalCurrency;
 }

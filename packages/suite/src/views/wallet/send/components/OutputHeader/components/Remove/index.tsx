@@ -21,11 +21,11 @@ const StyledIcon = styled(Icon)`
 
 interface Props {
     outputId: number;
-    sendFormActionsBitcoin: DispatchProps['sendFormActionsBitcoin'];
+    removeRecipient: DispatchProps['sendFormActionsBitcoin'];
 }
 
-export default ({ sendFormActionsBitcoin, outputId }: Props) => (
-    <Wrapper onClick={() => sendFormActionsBitcoin.removeRecipient(outputId)}>
+export default ({ removeRecipient }: Props) => (
+    <Wrapper onClick={removeRecipient}>
         <StyledIcon size={12} color={colors.BLACK50} icon="CLEAR" />
         <Translation id="TR_REMOVE" />
     </Wrapper>

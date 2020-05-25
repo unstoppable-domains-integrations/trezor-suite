@@ -30,21 +30,17 @@ const ColumnRight = styled(Column)`
 `;
 
 interface Props {
-    sendFormActionsBitcoin: DProps['sendFormActionsBitcoin'];
+    index: number;
     output: Output;
-    outputs: Output[];
+    removeRecipient?: (id: number) => void;
 }
 
-export default ({ outputs, output, sendFormActionsBitcoin }: Props) => (
+export default ({ index, output, removeRecipient }: Props) => (
     <Wrapper>
         <Column />
-        <Column>{outputs.length > 1 && <OutputIndex>#{output.id + 1}</OutputIndex>}</Column>
+        <Column>{removeRecipient && <OutputIndex>#{index + 1}</OutputIndex>}</Column>
         <ColumnRight>
-            {output.id !== 0 && (
-                <>
-                    <Remove sendFormActionsBitcoin={sendFormActionsBitcoin} outputId={output.id} />
-                </>
-            )}
+            {removeRecipient && <Remove removeRecipient={() => removeRecipient(output.id)} />}
         </ColumnRight>
     </Wrapper>
 );

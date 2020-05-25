@@ -1,3 +1,4 @@
+import { useActions } from '@suite-hooks';
 import { Translation, AddressLabeling, QuestionTooltip } from '@suite-components';
 import styled from 'styled-components';
 import { Input } from '@trezor/components';
@@ -7,6 +8,8 @@ import { Output } from '@wallet-types/sendForm';
 import { getInputState } from '@wallet-utils/sendFormUtils';
 import React from 'react';
 import { Props } from './Container';
+import * as modalActions from '@suite-actions/modalActions';
+import * as sendFormRippleActions from '@wallet-actions/send/sendFormRippleActions';
 
 const Label = styled.div`
     display: flex;
@@ -32,16 +35,24 @@ const getErrorMessage = (error: Output['address']['error'], isLoading: boolean) 
     }
 };
 
-export default ({ output, account, openModal, sendFormActions, send }: Props) => {
-    if (!account || !send) return null;
+export default ({ output, account, sendFormActions, send, register, errors, touched }: Props) => {
+    // if (!account) return null;
     const { address, id } = output;
-    const { isComposing } = send;
-    let showLoadingForCompose = false;
+    const openModal = useActions(modalActions.openModal);
+    const checkReserve = useActions(sendFormRippleActions.checkAccountReserve);
+    // const openModal2 = useActions(modalActions.onReceiveConfirmation);
+    // const { isComposing } = send;
+    const showLoadingForCompose = false;
+    const isComposing = false;
     const { value, error } = address;
 
-    if (isComposing && account.networkType === 'bitcoin') {
-        showLoadingForCompose = true;
-    }
+    // if (isComposing && account.networkType === 'bitcoin') {
+    //     showLoadingForCompose = true;
+    // }
+
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const er = errors ? errors[id] : null;
+    const validate = touched && touched[id];
 
     return (
         <Input
@@ -55,9 +66,7 @@ export default ({ output, account, openModal, sendFormActions, send }: Props) =>
                     <QuestionTooltip messageId="TR_RECIPIENT_ADDRESS_TOOLTIP" />
                 </Label>
             }
-            bottomText={
-                getErrorMessage(error, isComposing) || <AddressLabeling address={value} knownOnly />
-            }
+            bottomText={(er && er.message) || <AddressLabeling address={value} knownOnly />}
             button={{
                 icon: 'QR',
                 onClick: () =>
@@ -67,8 +76,33 @@ export default ({ output, account, openModal, sendFormActions, send }: Props) =>
                     }),
                 text: <Translation id="TR_SCAN" />,
             }}
-            value={value || ''}
-            onChange={e => sendFormActions.handleAddressChange(id, e.target.value)}
+            // value={value || ''}
+            name={`address[${id}]`}
+            innerRef={register({
+                // required: true,
+                validate: async value => {
+                    if (!validate && value.length === 0) return true; // address is valid until not touched (tx not final)
+                    // 1. length (every coin different)
+                    // 2. checksum
+                    // 3. reserve?
+
+                    // TODO: debouncing
+                    // await sleep(3000);
+                    // const r = await checkReserve(0, 'abc');
+                    const rand = Math.random();
+                    console.warn('asyc RESULT', rand, validate);
+                    return value === 'a' ? true : 'i huj!';
+                },
+                // validate: {
+                //     // TR_EMPTY: value => value.length === 0,
+                //     TR_INVALID: value => value.length === 1,
+                //     // TR_INVALID2: async value => {
+                //     //     await sleep(1000);
+                //     //     return value === 'aaa';
+                //     // },
+                // },
+            })}
+            // onChange={e => sendFormActions.handleAddressChange(id, e.target.value)}
         />
     );
 };

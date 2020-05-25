@@ -72,43 +72,45 @@ export const compose = () => async (dispatch: Dispatch, getState: GetState) => {
     Check destination account reserve
 */
 
-export const checkAccountReserve = (outputId: number, address: string) => async (
+export const checkAccountReserve = (outputId: number, descriptor: string) => async (
     dispatch: Dispatch,
     getState: GetState,
 ) => {
-    const { send, selectedAccount } = getState().wallet;
-    if (!send || selectedAccount.status !== 'loaded') return;
-    const { account } = selectedAccount;
-    const output = getOutput(send.outputs, outputId);
+    // const { send, selectedAccount } = getState().wallet;
+    // if (!send || selectedAccount.status !== 'loaded') return;
+    // const { account } = selectedAccount;
+    // const output = getOutput(send.outputs, outputId);
 
-    dispatch({
-        type: SEND.AMOUNT_LOADING,
-        isLoading: true,
-        outputId: output.id,
-    });
+    // dispatch({
+    //     type: SEND.AMOUNT_LOADING,
+    //     isLoading: true,
+    //     outputId: output.id,
+    // });
 
-    if (!address) return null;
+    // if (!address) return null;
 
     const response = await TrezorConnect.getAccountInfo({
-        coin: account.symbol,
-        descriptor: address,
+        coin: 'xrp',
+        descriptor,
     });
+
+    return response;
 
     // TODO: handle error state
 
-    if (response.success) {
-        dispatch({
-            type: SEND.XRP_IS_DESTINATION_ACCOUNT_EMPTY,
-            isDestinationAccountEmpty: response.payload.empty,
-            reserve: getReserveInXrp(account),
-        });
-    }
+    // if (response.success) {
+    //     dispatch({
+    //         type: SEND.XRP_IS_DESTINATION_ACCOUNT_EMPTY,
+    //         isDestinationAccountEmpty: response.payload.empty,
+    //         reserve: getReserveInXrp(account),
+    //     });
+    // }
 
-    dispatch({
-        type: SEND.AMOUNT_LOADING,
-        isLoading: false,
-        outputId: output.id,
-    });
+    // dispatch({
+    //     type: SEND.AMOUNT_LOADING,
+    //     isLoading: false,
+    //     outputId: output.id,
+    // });
 };
 
 /*

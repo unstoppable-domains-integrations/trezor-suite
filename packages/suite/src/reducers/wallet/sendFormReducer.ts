@@ -57,6 +57,10 @@ export default (state: State | null = null, action: WalletAction): State | null 
 
     return produce(state, draft => {
         switch (action.type) {
+            case 'STORE-TX':
+                draft = action.payload;
+                break;
+
             // show additional form
             case SEND.SET_ADDITIONAL_FORM_VISIBILITY: {
                 draft.isAdditionalFormVisible = !state.isAdditionalFormVisible;
