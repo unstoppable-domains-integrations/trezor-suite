@@ -120,18 +120,21 @@ const MetadataLabeling = (props: Props) => {
 
     let dropdownItems: DropdownMenuItem[] = [
         {
-            callback: () => setEditing(props.payload.defaultValue),
+            callback: () => activateEdit(),
             label: 'Edit label',
             'data-test': '@metadata/edit-button',
             key: 'edit-label',
         },
-        {
+    ];
+
+    if (labelingAvailable) {
+        dropdownItems.push({
             callback: () => onSubmit(''),
             label: 'Remove label',
             'data-test': '@metadata/remove-button',
             key: 'remove-label',
-        },
-    ];
+        });
+    }
 
     if (props.dropdownOptions) {
         dropdownItems = [...dropdownItems, ...props.dropdownOptions];
@@ -178,8 +181,8 @@ const MetadataLabeling = (props: Props) => {
                 props.defaultVisibleValue
             )}
 
-            {((labelingAvailable && !props.payload.value) ||
-                (!labelingAvailable && device?.connected)) && (
+            {((!labelingAvailable && !props.payload.value) ||
+                (labelingAvailable && !props.payload.value)) && (
                 <AddLabelButton
                     data-test={`${dataTestBase}/add-label-button`}
                     variant="tertiary"
